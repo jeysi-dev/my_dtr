@@ -113,7 +113,7 @@
         .dtr-table th,
         .dtr-table td {
             border: 1px solid #000;
-            padding: 3px 2px;
+            padding: 1px 2px;
             text-align: center;
             vertical-align: middle;
         }
@@ -163,7 +163,7 @@
 
         .summary-row td {
             border: 1px solid #000;
-            padding: 3px 2px;
+            padding: 1px 2px;
             font-size: 9px;
         }
 
@@ -197,7 +197,7 @@
         .signature-section {
             text-align: center;
             margin-bottom: 2px;
-            margin-top: 8px;
+            margin-top: 25px;
         }
 
         .signature-name {
@@ -212,7 +212,7 @@
 
         .director-section {
             text-align: center;
-            margin-top: 8px;
+            margin-top: 55px;
             padding-top: 1px;
         }
 
