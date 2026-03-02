@@ -18,7 +18,7 @@
 <div class="month-row">
     <span>For the month of</span>
     <span class="month-value">{{ $record->month_year }}</span>
-    <span class="fy-indicator">(FY)</span>
+    {{-- <span class="fy-indicator">(FY)</span> --}}
 </div>
 
 <!-- Employee Information -->

@@ -85,7 +85,8 @@
                                         <span x-text="entry.holiday_type"></span>
                                     </td>
                                 </template>
-                                <template x-if="entry.day_name === 'Sat' || entry.day_name === 'Sun'">
+                                <template
+                                    x-if="(entry.day_name === 'Sat' || entry.day_name === 'Sun') && (!entry.holiday_type || entry.holiday_type === 'FLEXIPLACE')">
                                     <td colspan="4" class="text-center italic text-gray-700">
                                         <span x-text="entry.day_name === 'Sat' ? 'SATURDAY' : 'SUNDAY'"></span>
                                     </td>
@@ -340,28 +341,57 @@
                     const [year, month] = this.selectedMonth.split('-').map(Number);
                     const daysInMonth = new Date(year, month, 0).getDate();
                     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                    const holidayMap = this.getHolidayMap(year);
 
                     this.entries = [];
                     for (let day = 1; day <= daysInMonth; day++) {
                         const date = new Date(year, month - 1, day);
+                        const isoDate = date.toISOString().split('T')[0];
                         const isWeekend = dayNames[date.getDay()] === 'Sat' || dayNames[date.getDay()] === 'Sun';
+                        const holidayType = holidayMap[isoDate] || '';
+
                         this.entries.push({
                             day: day,
-                            date: date.toISOString().split('T')[0],
+                            date: isoDate,
                             day_name: dayNames[date.getDay()],
                             time_in_am: '',
                             time_out_am: isWeekend ? '' : '12:00',
                             time_in_pm: isWeekend ? '' : '12:01',
                             time_out_pm: '',
                             hours_mins: '',
-                            is_holiday: false,
-                            holiday_type: '',
+                            is_holiday: !!holidayType,
+                            holiday_type: holidayType,
                             remarks: '',
                         });
                     }
 
                     this.recordId = null;
                     this.calculateSummary();
+                },
+
+                getHolidayMap(year) {
+                    const holidayMapByYear = {
+                        2026: {
+                            '2026-01-01': "New Year's Day",
+                            '2026-02-17': 'Chinese New Year',
+                            '2026-04-02': 'Maundy Thursday',
+                            '2026-04-03': 'Good Friday',
+                            '2026-04-04': 'Black Saturday',
+                            '2026-04-09': 'Araw ng Kagitingan',
+                            '2026-05-01': 'Labor Day',
+                            '2026-06-12': 'Independence Day',
+                            '2026-08-21': 'Ninoy Aquino Day',
+                            '2026-08-31': 'National Heroes Day',
+                            '2026-11-01': 'All Saints\' Day',
+                            '2026-11-30': 'Bonifacio Day',
+                            '2026-12-08': 'Feast of the Immaculate Conception',
+                            '2026-12-25': 'Christmas Day',
+                            '2026-12-30': 'Rizal Day',
+                            '2026-12-31': 'Last Day of the Year',
+                        },
+                    };
+
+                    return holidayMapByYear[year] || {};
                 },
 
                 ensureWeekendBreaksBlank() {
