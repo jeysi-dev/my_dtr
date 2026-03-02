@@ -149,6 +149,11 @@
         .dtr-table .remark-col {
             width: 35px;
             font-size: 9px;
+            white-space: normal;
+            word-wrap: break-word;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            line-height: 1.15;
         }
 
         .holiday-text {
@@ -202,6 +207,7 @@
 
         .signature-name {
             font-weight: bold;
+            text-decoration: underline;
             margin-bottom: 1px;
             font-size: 10px;
         }

@@ -71,6 +71,9 @@
                 </td>
                 @if ($hasHoliday)
                     <td colspan="4" class="holiday-text">{{ $entry->holiday_type }}</td>
+                @elseif ($isWeekend)
+                    <td colspan="4" class="holiday-text">{{ $entry->day_name === 'Sat' ? 'SATURDAY' : 'SUNDAY' }}
+                    </td>
                 @else
                     <td class="time-col">{{ $entry->formatted_time_in_am ?? '' }}</td>
                     <td class="time-col">{{ $entry->formatted_time_out_am ?? '' }}</td>
@@ -78,7 +81,7 @@
                     <td class="time-col">{{ $entry->formatted_time_out_pm ?? '' }}</td>
                 @endif
                 <td class="hours-col"></td>
-                <td class="remark-col"></td>
+                <td class="remark-col">{{ $entry->remarks ?? '' }}</td>
             </tr>
         @endforeach
         <!-- Summary Section - Integrated -->

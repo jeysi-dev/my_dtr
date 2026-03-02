@@ -85,27 +85,45 @@
                                         <span x-text="entry.holiday_type"></span>
                                     </td>
                                 </template>
-                                <template x-if="!entry.holiday_type || entry.holiday_type === 'FLEXIPLACE'">
+                                <template x-if="entry.day_name === 'Sat' || entry.day_name === 'Sun'">
+                                    <td colspan="4" class="text-center italic text-gray-700">
+                                        <span x-text="entry.day_name === 'Sat' ? 'SATURDAY' : 'SUNDAY'"></span>
+                                    </td>
+                                </template>
+                                <template
+                                    x-if="(!entry.holiday_type || entry.holiday_type === 'FLEXIPLACE') && !(entry.day_name === 'Sat' || entry.day_name === 'Sun')">
                                     <td>
                                         <input type="time" x-model="entry.time_in_am" @change="calculateHours(index)"
+                                            @keydown.tab="handleTabFromAmIn($event, index)"
+                                            @keydown.enter="handleTabFromAmIn($event, index)" data-field="time_in_am"
+                                            :disabled="entry.day_name === 'Sat' || entry.day_name === 'Sun'"
                                             class="w-full border-0 bg-transparent focus:ring-0 text-center">
                                     </td>
                                 </template>
-                                <template x-if="!entry.holiday_type || entry.holiday_type === 'FLEXIPLACE'">
+                                <template
+                                    x-if="(!entry.holiday_type || entry.holiday_type === 'FLEXIPLACE') && !(entry.day_name === 'Sat' || entry.day_name === 'Sun')">
                                     <td>
                                         <input type="time" x-model="entry.time_out_am" @change="calculateHours(index)"
+                                            data-field="time_out_am"
+                                            :disabled="entry.day_name === 'Sat' || entry.day_name === 'Sun'"
                                             class="w-full border-0 bg-transparent focus:ring-0 text-center">
                                     </td>
                                 </template>
-                                <template x-if="!entry.holiday_type || entry.holiday_type === 'FLEXIPLACE'">
+                                <template
+                                    x-if="(!entry.holiday_type || entry.holiday_type === 'FLEXIPLACE') && !(entry.day_name === 'Sat' || entry.day_name === 'Sun')">
                                     <td>
                                         <input type="time" x-model="entry.time_in_pm" @change="calculateHours(index)"
+                                            data-field="time_in_pm"
+                                            :disabled="entry.day_name === 'Sat' || entry.day_name === 'Sun'"
                                             class="w-full border-0 bg-transparent focus:ring-0 text-center">
                                     </td>
                                 </template>
-                                <template x-if="!entry.holiday_type || entry.holiday_type === 'FLEXIPLACE'">
+                                <template
+                                    x-if="(!entry.holiday_type || entry.holiday_type === 'FLEXIPLACE') && !(entry.day_name === 'Sat' || entry.day_name === 'Sun')">
                                     <td>
                                         <input type="time" x-model="entry.time_out_pm" @change="calculateHours(index)"
+                                            data-field="time_out_pm"
+                                            :disabled="entry.day_name === 'Sat' || entry.day_name === 'Sun'"
                                             class="w-full border-0 bg-transparent focus:ring-0 text-center">
                                     </td>
                                 </template>
@@ -114,12 +132,21 @@
                                 </td>
                                 <td>
                                     <input type="text" x-model="entry.holiday_type"
+                                        :disabled="entry.day_name === 'Sat' || entry.day_name === 'Sun'"
                                         placeholder="e.g., Holiday, FLEXIPLACE"
                                         class="w-full border-0 bg-transparent focus:ring-0 text-sm">
                                 </td>
                                 <td>
-                                    <input type="text" x-model="entry.remarks"
-                                        class="w-full border-0 bg-transparent focus:ring-0 text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <input type="text" x-model="entry.remarks"
+                                            :disabled="entry.day_name === 'Sat' || entry.day_name === 'Sun'"
+                                            class="w-full border-0 bg-transparent focus:ring-0 text-sm">
+                                        <button type="button" @click="clearDayTimes(index)"
+                                            x-show="(entry.time_in_am || entry.time_out_am || entry.time_in_pm || entry.time_out_pm) && !(entry.day_name === 'Sat' || entry.day_name === 'Sun')"
+                                            class="text-xs text-red-600 hover:text-red-700 font-medium whitespace-nowrap">
+                                            Clear
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         </template>
@@ -303,6 +330,7 @@
                         remarks: entry.remarks,
                     }));
 
+                    this.ensureWeekendBreaksBlank();
                     this.calculateSummary();
                 },
 
@@ -316,13 +344,14 @@
                     this.entries = [];
                     for (let day = 1; day <= daysInMonth; day++) {
                         const date = new Date(year, month - 1, day);
+                        const isWeekend = dayNames[date.getDay()] === 'Sat' || dayNames[date.getDay()] === 'Sun';
                         this.entries.push({
                             day: day,
                             date: date.toISOString().split('T')[0],
                             day_name: dayNames[date.getDay()],
                             time_in_am: '',
-                            time_out_am: '12:00',
-                            time_in_pm: '12:01',
+                            time_out_am: isWeekend ? '' : '12:00',
+                            time_in_pm: isWeekend ? '' : '12:01',
                             time_out_pm: '',
                             hours_mins: '',
                             is_holiday: false,
@@ -333,6 +362,22 @@
 
                     this.recordId = null;
                     this.calculateSummary();
+                },
+
+                ensureWeekendBreaksBlank() {
+                    this.entries = this.entries.map(entry => {
+                        const isWeekend = entry.day_name === 'Sat' || entry.day_name === 'Sun';
+
+                        if (!isWeekend) {
+                            return entry;
+                        }
+
+                        return {
+                            ...entry,
+                            time_out_am: '',
+                            time_in_pm: '',
+                        };
+                    });
                 },
 
                 calculateHours(index) {
@@ -366,6 +411,33 @@
                     }
 
                     this.calculateSummary();
+                },
+
+                clearDayTimes(index) {
+                    const entry = this.entries[index];
+                    entry.time_in_am = '';
+                    entry.time_out_am = '';
+                    entry.time_in_pm = '';
+                    entry.time_out_pm = '';
+                    entry.hours_mins = '';
+                    this.calculateSummary();
+                },
+
+                handleTabFromAmIn(event, index) {
+                    if (event.shiftKey) {
+                        return;
+                    }
+
+                    event.preventDefault();
+
+                    this.$nextTick(() => {
+                        const row = event.target.closest('tr');
+                        const pmOutInput = row?.querySelector('input[data-field="time_out_pm"]:not([disabled])');
+
+                        if (pmOutInput) {
+                            pmOutInput.focus();
+                        }
+                    });
                 },
 
                 timeToMinutes(time) {
@@ -435,6 +507,8 @@
                         this.showMessage('Please fill in employee name and position.', 'error');
                         return;
                     }
+
+                    this.ensureWeekendBreaksBlank();
 
                     this.saving = true;
 
