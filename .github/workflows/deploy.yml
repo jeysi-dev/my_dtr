@@ -1,0 +1,46 @@
+name: Deploy Laravel 11
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Proxmox VM
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.PORT }}
+
+          script: |
+            cd /var/www/html/jeys_dtr
+
+            echo "Pulling latest changes..."
+            git pull origin main
+
+            echo "Installing dependencies..."
+            composer install --no-interaction --prefer-dist --optimize-autoloader
+
+            echo "Laravel optimize..."
+            php artisan optimize:clear
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+
+            echo "Running migrations..."
+            php artisan migrate --force
+
+            echo "Restarting queues..."
+            php artisan queue:restart
+
+            echo "Fix permissions..."
+            sudo chown -R www-data:www-data storage bootstrap/cache
+            sudo chmod -R 775 storage bootstrap/cache
+
+            echo "Deployment finished!"
