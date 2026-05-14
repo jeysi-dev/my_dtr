@@ -2,45 +2,66 @@ name: Deploy Laravel 11
 
 on:
   push:
-    branches:
-      - master
+    branches: [master]
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+  test:
+    name: Run Tests
+    runs-on: self-hosted
 
     steps:
-      - name: Deploy to Proxmox VM
-        uses: appleboy/ssh-action@v1.2.0
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.PORT }}
+          php-version: '8.4'
+          extensions: mbstring, xml, bcmath, curl, zip, mysql, redis
+          coverage: none
 
-          script: |
-            cd /var/www/html/jeys_dtr
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --optimize-autoloader
 
-            echo "Pulling latest changes..."
-            git pull origin main
+      - name: Run migrations
+        run: php artisan migrate
 
-            echo "Installing dependencies..."
-            composer install --no-interaction --prefer-dist --optimize-autoloader
+  deploy:
+    name: Deploy to Production
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            echo "Laravel optimize..."
-            php artisan optimize:clear
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
+      - name: Install Composer dependencies
+        run: |
+          composer install \
+            --no-interaction \
+            --optimize-autoloader \
+            --no-dev
 
-            echo "Running migrations..."
-            php artisan migrate --force
+      - name: Install NPM & build assets
+        run: |
+          npm ci
+          npm run build
 
-            echo "Restarting queues..."
-            php artisan queue:restart
+      - name: Run migrations
+        run: php artisan migrate
 
-            echo "Fix permissions..."
-            sudo chown -R www-data:www-data storage bootstrap/cache
-            sudo chmod -R 775 storage bootstrap/cache
+      - name: Cache config & routes
+        run: |
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+          php artisan event:cache
 
-            echo "Deployment finished!"
+      - name: Fix permissions
+        run: |
+          sudo chown -R www-data:www-data /var/www/hmtl/jeys_dtr
+          sudo chmod -R 775 /var/www/html/jeys_dtr/storage \
+                            /var/www/html/jeys_dtr/bootstrap/cache
+
+      - name: Clear caches
+        run: |
+          php artisan cache:clear
+          php artisan queue:restart
