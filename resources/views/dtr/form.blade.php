@@ -293,9 +293,9 @@
                 messageType: 'success',
 
                 init() {
-                    // Set default month to current month
+                    // Set default month to current month using local date values
                     const now = new Date();
-                    this.selectedMonth = now.toISOString().slice(0, 7);
+                    this.selectedMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
                     // Load existing record if provided
                     @if ($selectedRecord)
@@ -346,7 +346,7 @@
                     this.entries = [];
                     for (let day = 1; day <= daysInMonth; day++) {
                         const date = new Date(year, month - 1, day);
-                        const isoDate = date.toISOString().split('T')[0];
+                        const isoDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
                         const isWeekend = dayNames[date.getDay()] === 'Sat' || dayNames[date.getDay()] === 'Sun';
                         const holidayType = holidayMap[isoDate] || '';
 
