@@ -3,46 +3,46 @@
 @section('content')
     <div x-data="dtrApp()" x-init="init()" x-cloak>
         <!-- Header -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div class="p-6 mb-6 bg-white rounded-lg shadow-md">
             <div class="flex items-center justify-between mb-6">
-                <img src="{{ asset('assets/img/opapru_logo.png') }}" alt="OPAPRU Logo" class="h-20 w-20">
+                <img src="{{ asset('assets/img/opapru_logo.png') }}" alt="OPAPRU Logo" class="w-20 h-20">
                 <div class="flex-1 text-center">
                     <h1 class="text-2xl font-bold text-gray-800">DAILY TIME RECORD</h1>
                     <p class="text-gray-600">Office of the Presidential Adviser on Peace, Reconciliation and Unity</p>
                 </div>
-                <div class="h-20 w-20"></div>
+                <div class="w-20 h-20"></div>
             </div>
 
             <!-- Employee Information -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div class="grid grid-cols-1 gap-4 mb-6 md:grid-cols-2">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Employee Name:</label>
+                    <label class="block mb-1 text-sm font-medium text-gray-700">Employee Name:</label>
                     <input type="text" x-model="form.employee_name"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Enter employee name">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Position:</label>
+                    <label class="block mb-1 text-sm font-medium text-gray-700">Position:</label>
                     <input type="text" x-model="form.position"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Enter position">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Official Time:</label>
+                    <label class="block mb-1 text-sm font-medium text-gray-700">Official Time:</label>
                     <input type="text" x-model="form.official_time"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="FLEXITIME">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Office/Department:</label>
+                    <label class="block mb-1 text-sm font-medium text-gray-700">Office/Department:</label>
                     <input type="text" x-model="form.office_department"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="GASS - ICTD">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Month/Year:</label>
+                    <label class="block mb-1 text-sm font-medium text-gray-700">Month/Year:</label>
                     <input type="month" x-model="selectedMonth" @change="generateEntries()"
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
             </div>
         </div>
@@ -50,9 +50,9 @@
         <!-- DTR Tables - Two Copies Side by Side -->
         <div class="grid grid-cols-1 gap-4 mb-6">
             <!-- First DTR Copy -->
-            <div class="bg-white rounded-lg shadow-md p-4 overflow-x-auto">
-                <h3 class="text-center font-semibold mb-3 text-sm">Copy 1</h3>
-                <table class="w-full dtr-table border-collapse">
+            <div class="p-4 overflow-x-auto bg-white rounded-lg shadow-md">
+                <h3 class="mb-3 text-sm font-semibold text-center">Copy 1</h3>
+                <table class="w-full border-collapse dtr-table">
                     <thead>
                         <tr>
                             <th rowspan="2" class="w-16">Days</th>
@@ -76,18 +76,18 @@
                                     'weekend-row': entry.day_name === 'Sat' || entry.day_name === 'Sun',
                                     'holiday-row': entry.is_holiday || entry.holiday_type
                                 }">
-                                <td class="text-center font-medium">
+                                <td class="font-medium text-center">
                                     <span x-text="String(entry.day).padStart(2, '0')"></span>.
                                     <span x-text="entry.day_name"></span>
                                 </td>
                                 <template x-if="entry.holiday_type && entry.holiday_type !== 'FLEXIPLACE'">
-                                    <td colspan="4" class="text-center italic text-gray-700">
+                                    <td colspan="4" class="italic text-center text-gray-700">
                                         <span x-text="entry.holiday_type"></span>
                                     </td>
                                 </template>
                                 <template
                                     x-if="(entry.day_name === 'Sat' || entry.day_name === 'Sun') && (!entry.holiday_type || entry.holiday_type === 'FLEXIPLACE')">
-                                    <td colspan="4" class="text-center italic text-gray-700">
+                                    <td colspan="4" class="italic text-center text-gray-700">
                                         <span x-text="entry.day_name === 'Sat' ? 'SATURDAY' : 'SUNDAY'"></span>
                                     </td>
                                 </template>
@@ -98,7 +98,7 @@
                                             @keydown.tab="handleTabFromAmIn($event, index)"
                                             @keydown.enter="handleTabFromAmIn($event, index)" data-field="time_in_am"
                                             :disabled="entry.day_name === 'Sat' || entry.day_name === 'Sun'"
-                                            class="w-full border-0 bg-transparent focus:ring-0 text-center">
+                                            class="w-full text-center bg-transparent border-0 focus:ring-0">
                                     </td>
                                 </template>
                                 <template
@@ -107,7 +107,7 @@
                                         <input type="time" x-model="entry.time_out_am" @change="calculateHours(index)"
                                             data-field="time_out_am"
                                             :disabled="entry.day_name === 'Sat' || entry.day_name === 'Sun'"
-                                            class="w-full border-0 bg-transparent focus:ring-0 text-center">
+                                            class="w-full text-center bg-transparent border-0 focus:ring-0">
                                     </td>
                                 </template>
                                 <template
@@ -116,7 +116,7 @@
                                         <input type="time" x-model="entry.time_in_pm" @change="calculateHours(index)"
                                             data-field="time_in_pm"
                                             :disabled="entry.day_name === 'Sat' || entry.day_name === 'Sun'"
-                                            class="w-full border-0 bg-transparent focus:ring-0 text-center">
+                                            class="w-full text-center bg-transparent border-0 focus:ring-0">
                                     </td>
                                 </template>
                                 <template
@@ -125,7 +125,7 @@
                                         <input type="time" x-model="entry.time_out_pm" @change="calculateHours(index)"
                                             data-field="time_out_pm"
                                             :disabled="entry.day_name === 'Sat' || entry.day_name === 'Sun'"
-                                            class="w-full border-0 bg-transparent focus:ring-0 text-center">
+                                            class="w-full text-center bg-transparent border-0 focus:ring-0">
                                     </td>
                                 </template>
                                 <td class="text-center">
@@ -135,16 +135,16 @@
                                     <input type="text" x-model="entry.holiday_type"
                                         :disabled="entry.day_name === 'Sat' || entry.day_name === 'Sun'"
                                         placeholder="e.g., Holiday, FLEXIPLACE"
-                                        class="w-full border-0 bg-transparent focus:ring-0 text-sm">
+                                        class="w-full text-sm bg-transparent border-0 focus:ring-0">
                                 </td>
                                 <td>
                                     <div class="flex items-center gap-2">
                                         <input type="text" x-model="entry.remarks"
                                             :disabled="entry.day_name === 'Sat' || entry.day_name === 'Sun'"
-                                            class="w-full border-0 bg-transparent focus:ring-0 text-sm">
+                                            class="w-full text-sm bg-transparent border-0 focus:ring-0">
                                         <button type="button" @click="clearDayTimes(index)"
                                             x-show="(entry.time_in_am || entry.time_out_am || entry.time_in_pm || entry.time_out_pm) && !(entry.day_name === 'Sat' || entry.day_name === 'Sun')"
-                                            class="text-xs text-red-600 hover:text-red-700 font-medium whitespace-nowrap">
+                                            class="text-xs font-medium text-red-600 hover:text-red-700 whitespace-nowrap">
                                             Clear
                                         </button>
                                     </div>
@@ -157,54 +157,54 @@
         </div>
 
         <!-- Summary Section -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h3 class="text-lg font-semibold mb-4 text-center border-b pb-2">TOTAL SUMMARY</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                <div class="flex justify-between border-b pb-1">
+        <div class="p-6 mb-6 bg-white rounded-lg shadow-md">
+            <h3 class="pb-2 mb-4 text-lg font-semibold text-center border-b">TOTAL SUMMARY</h3>
+            <div class="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
+                <div class="flex justify-between pb-1 border-b">
                     <span>Days Worked:</span>
                     <span x-text="summary.days_worked" class="font-medium">0</span>
                 </div>
-                <div class="flex justify-between border-b pb-1">
+                <div class="flex justify-between pb-1 border-b">
                     <span>Tardiness:</span>
                     <span x-text="summary.tardiness" class="font-medium">0</span>
                 </div>
-                <div class="flex justify-between border-b pb-1">
+                <div class="flex justify-between pb-1 border-b">
                     <span>Leave:</span>
                     <span x-text="summary.leave" class="font-medium">0</span>
                 </div>
-                <div class="flex justify-between border-b pb-1">
+                <div class="flex justify-between pb-1 border-b">
                     <span>Absences:</span>
                     <span x-text="summary.absences" class="font-medium">0</span>
                 </div>
-                <div class="flex justify-between border-b pb-1">
+                <div class="flex justify-between pb-1 border-b">
                     <span>TA Free:</span>
                     <span x-text="summary.ta_free" class="font-medium">0</span>
                 </div>
-                <div class="flex justify-between border-b pb-1">
+                <div class="flex justify-between pb-1 border-b">
                     <span>Rest Day:</span>
                     <span x-text="summary.rest_day" class="font-medium">0</span>
                 </div>
-                <div class="flex justify-between border-b pb-1">
+                <div class="flex justify-between pb-1 border-b">
                     <span>Overtime:</span>
                     <span x-text="summary.overtime" class="font-medium">0</span>
                 </div>
-                <div class="flex justify-between border-b pb-1">
+                <div class="flex justify-between pb-1 border-b">
                     <span>Undertime:</span>
                     <span x-text="summary.undertime" class="font-medium">0</span>
                 </div>
-                <div class="flex justify-between border-b pb-1">
+                <div class="flex justify-between pb-1 border-b">
                     <span>Special Hol.:</span>
                     <span x-text="summary.special_holiday" class="font-medium">0</span>
                 </div>
-                <div class="flex justify-between border-b pb-1">
+                <div class="flex justify-between pb-1 border-b">
                     <span>Total Days Worked:</span>
                     <span x-text="summary.total_days_worked" class="font-medium">0</span>
                 </div>
-                <div class="flex justify-between border-b pb-1">
+                <div class="flex justify-between pb-1 border-b">
                     <span>UT Free:</span>
                     <span x-text="summary.ut_free" class="font-medium">0</span>
                 </div>
-                <div class="flex justify-between border-b pb-1">
+                <div class="flex justify-between pb-1 border-b">
                     <span>Legal Hol.:</span>
                     <span x-text="summary.legal_holiday" class="font-medium">0</span>
                 </div>
@@ -212,39 +212,39 @@
         </div>
 
         <!-- Footer Info -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-            <p class="text-xs text-gray-600 mb-4">
+        <div class="p-6 mb-6 bg-white rounded-lg shadow-md">
+            <p class="mb-4 text-xs text-gray-600">
                 I CERTIFY on my honor that the above is a true and correct report of the hours of work
                 performed, record of which was made daily at the time of arrival and departure from office.
             </p>
-            <div class="text-center mb-4">
+            <div class="mb-4 text-center">
                 <p class="font-semibold" x-text="form.employee_name || '_________________'"></p>
                 <p class="text-sm text-gray-600" x-text="form.position || '_________________'"></p>
             </div>
-            <div class="text-center border-t pt-4">
+            <div class="pt-4 text-center border-t">
                 <p class="font-semibold text-blue-800">DIR. LEILANNIE T. DISOMANGCOP</p>
                 <p class="text-sm text-gray-600">Director III, GASS</p>
             </div>
         </div>
 
         <!-- Action Buttons -->
-        <div class="flex flex-wrap gap-4 justify-center">
+        <div class="flex flex-wrap justify-center gap-4">
             <button @click="saveDtr()" :disabled="saving"
-                class="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-3 rounded-lg font-medium transition">
+                class="px-6 py-3 font-medium text-white transition bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-blue-400">
                 <span x-show="!saving">💾 Save DTR</span>
                 <span x-show="saving">Saving...</span>
             </button>
             <button @click="exportPdf()" :disabled="!recordId || exporting"
-                class="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-lg font-medium transition">
+                class="px-6 py-3 font-medium text-white transition bg-green-600 rounded-lg hover:bg-green-700 disabled:bg-gray-400">
                 <span x-show="!exporting">📄 Export PDF</span>
                 <span x-show="exporting">Generating...</span>
             </button>
             <button @click="clearForm()"
-                class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition">
+                class="px-6 py-3 font-medium text-white transition bg-gray-600 rounded-lg hover:bg-gray-700">
                 🗑️ Clear Form
             </button>
             <button @click="deleteRecord()" x-show="recordId"
-                class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition">
+                class="px-6 py-3 font-medium text-white transition bg-red-600 rounded-lg hover:bg-red-700">
                 ❌ Delete Record
             </button>
         </div>
@@ -253,7 +253,7 @@
         <div x-show="message"
             :class="messageType === 'success' ? 'bg-green-100 border-green-500 text-green-700' :
                 'bg-red-100 border-red-500 text-red-700'"
-            class="fixed bottom-4 right-4 p-4 rounded-lg border shadow-lg max-w-md" x-transition>
+            class="fixed max-w-md p-4 border rounded-lg shadow-lg bottom-4 right-4" x-transition>
             <p x-text="message"></p>
         </div>
     </div>
@@ -312,9 +312,11 @@
                     this.form.official_time = record.official_time || 'FLEXITIME';
                     this.form.office_department = record.office_department;
 
-                    // Parse the record_month to set selectedMonth
+                    // Parse the record_month to set selectedMonth (use local year/month to avoid timezone shifts)
                     const recordMonth = new Date(record.record_month);
-                    this.selectedMonth = recordMonth.toISOString().slice(0, 7);
+                    const recordYear = recordMonth.getFullYear();
+                    const recordMonthNum = String(recordMonth.getMonth() + 1).padStart(2, '0');
+                    this.selectedMonth = `${recordYear}-${recordMonthNum}`;
 
                     // Load entries
                     this.entries = record.entries.map(entry => ({
